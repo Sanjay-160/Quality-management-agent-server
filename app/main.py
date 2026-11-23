@@ -3,7 +3,7 @@ from typing import List, Optional
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from .config import get_config
+from .config import get_config, get_cors_origins
 from .db import test_connection, engine, start_keep_alive
 from .loader import load_datasets
 from . import analytics
@@ -61,9 +61,12 @@ app = FastAPI(
     lifespan=lifespan
 )
 
+cors_origins = get_cors_origins()
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
+    allow_origins=cors_origins,
+    allow_credentials="*" not in cors_origins,
     allow_methods=["*"],
     allow_headers=["*"]
 )
